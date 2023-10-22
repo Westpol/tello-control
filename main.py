@@ -5,7 +5,7 @@ import numpy as np
 import time
 
 # Speed of the drone from 0 to 100
-S = 100
+S = 10
 # Frames per second of the pygame window display
 # A low number also results in input lag, as input information is processed once per frame.
 FPS = 90
@@ -22,7 +22,7 @@ class FrontEnd(object):
             - W and S: Up and down.
     """
 
-    def __init__(self, xy_per_second, yaw_degrees_per_second):
+    def __init__(self, xy_per_second, yaw_degrees_per_second, height_limit):
         # Init pygame
         pygame.init()
 
@@ -48,11 +48,12 @@ class FrontEnd(object):
         # Cage mode variables
         self.x_pos = 0
         self.y_pos = 0
-        self.z_pos = 0
         self.yaw_pos = 0
         self.xy_per_second = xy_per_second
         self.yaw_per_second = yaw_degrees_per_second
         self.height = 0
+
+        self.height_limit = height_limit
 
     def run(self):
 
@@ -149,13 +150,17 @@ class FrontEnd(object):
     def update(self):
         # Update routine. Send velocities to Tello.
         if self.send_rc_control:
+
             self.height = self.tello.get_barometer()
+            if self.height > self.height_limit and self.up_down_velocity > 0:
+                self.up_down_velocity = 0
+
             self.tello.send_rc_control(self.left_right_velocity, self.for_back_velocity,
                                        self.up_down_velocity, self.yaw_velocity)
 
 
 def main():
-    frontend = FrontEnd(10, 45)
+    frontend = FrontEnd(S, 45, 200)
 
     # run frontend
 
