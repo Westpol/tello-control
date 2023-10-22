@@ -4,11 +4,11 @@ import pygame
 import numpy as np
 import time
 
-# Speed of the drone
-S = 1000
+# Speed of the drone from 0 to 100
+S = 100
 # Frames per second of the pygame window display
 # A low number also results in input lag, as input information is processed once per frame.
-FPS = 30
+FPS = 90
 
 
 class FrontEnd(object):
