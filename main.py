@@ -5,7 +5,7 @@ import numpy as np
 import time
 
 # Speed of the drone from 0 to 100
-S = 10
+S = 50
 # Frames per second of the pygame window display
 # A low number also results in input lag, as input information is processed once per frame.
 FPS = 90
@@ -27,7 +27,7 @@ class FrontEnd(object):
         pygame.init()
 
         # Create pygame window
-        pygame.display.set_caption("Tello video stream lul")
+        pygame.display.set_caption("Tello video stream")
         self.screen = pygame.display.set_mode([960, 720])
 
         # Init Tello object that interacts with the Tello drone
@@ -54,6 +54,7 @@ class FrontEnd(object):
         self.height = 0
 
         self.height_limit = height_limit
+        self.groundHeight = 0
 
     def run(self):
 
@@ -65,6 +66,8 @@ class FrontEnd(object):
         self.tello.streamon()
 
         frame_read = self.tello.get_frame_read()
+
+        self.groundHeight = self.tello.get_barometer()
 
         should_stop = False
         while not should_stop:
@@ -151,7 +154,8 @@ class FrontEnd(object):
         # Update routine. Send velocities to Tello.
         if self.send_rc_control:
 
-            self.height = self.tello.get_barometer()
+            self.height = self.tello.get_barometer() - self.groundHeight
+            print(self.height)
             if self.height > self.height_limit and self.up_down_velocity > 0:
                 self.up_down_velocity = 0
 
@@ -160,7 +164,7 @@ class FrontEnd(object):
 
 
 def main():
-    frontend = FrontEnd(S, 45, 200)
+    frontend = FrontEnd(S, 34.285714286, 200)
 
     # run frontend
 
