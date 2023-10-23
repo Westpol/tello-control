@@ -50,7 +50,7 @@ class FrontEnd(object):
         self.x_pos = 0
         self.y_pos = 0
         self.yaw_pos = 0
-        self.xy_per_second = xy_per_second
+        self.xy_per_second = xy_per_second * 2
         self.yaw_per_second = yaw_degrees_per_second
         self.height = 0
 
@@ -166,9 +166,9 @@ class FrontEnd(object):
             self.yaw_pos += (self.yaw_per_second * (time.time() - self.deltaT)) * (self.yaw_velocity / S)
             print(self.yaw_pos)
             self.x_pos += cos(radians(self.yaw_pos)) * (self.xy_per_second * (time.time() - self.deltaT)) * (self.for_back_velocity / S)
-            self.x_pos += sin(radians(self.yaw_pos)) * (self.xy_per_second * (time.time() - self.deltaT)) * (self.for_back_velocity / S)
-            self.y_pos += cos(radians(self.yaw_pos)) * (self.xy_per_second * (time.time() - self.deltaT)) * (self.left_right_velocity / S)
-            self.y_pos += sin(radians(self.yaw_pos)) * (self.xy_per_second * (time.time() - self.deltaT)) * (self.left_right_velocity / S)
+            self.x_pos += -sin(radians(self.yaw_pos)) * (self.xy_per_second * (time.time() - self.deltaT)) * (self.left_right_velocity / S)
+            self.y_pos += -cos(radians(self.yaw_pos)) * (self.xy_per_second * (time.time() - self.deltaT)) * (self.left_right_velocity / S)
+            self.y_pos += -sin(radians(self.yaw_pos)) * (self.xy_per_second * (time.time() - self.deltaT)) * (self.for_back_velocity / S)
             print("x:{0}  |  y:{1}".format(self.x_pos, self.y_pos))
 
             self.deltaT = time.time()
