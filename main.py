@@ -9,7 +9,7 @@ from math import sin, cos, radians
 S = 50
 # Frames per second of the pygame window display
 # A low number also results in input lag, as input information is processed once per frame.
-FPS = 90
+FPS = 120
 
 
 class FrontEnd(object):
@@ -165,10 +165,10 @@ class FrontEnd(object):
 
             self.yaw_pos += (self.yaw_per_second * (time.time() - self.deltaT)) * (self.yaw_velocity / S)
             print(self.yaw_pos)
-            self.x_pos += cos(radians((self.xy_per_second * (time.time() - self.deltaT)) * (self.for_back_velocity / S)))
-            self.x_pos += sin(radians((self.xy_per_second * (time.time() - self.deltaT)) * (self.for_back_velocity / S)))
-            self.y_pos += cos(radians((self.xy_per_second * (time.time() - self.deltaT)) * (self.left_right_velocity / S)))
-            self.y_pos += sin(radians((self.xy_per_second * (time.time() - self.deltaT)) * (self.left_right_velocity / S)))
+            self.x_pos += cos(radians(self.yaw_pos)) * (self.xy_per_second * (time.time() - self.deltaT)) * (self.for_back_velocity / S)
+            self.x_pos += sin(radians(self.yaw_pos)) * (self.xy_per_second * (time.time() - self.deltaT)) * (self.for_back_velocity / S)
+            self.y_pos += cos(radians(self.yaw_pos)) * (self.xy_per_second * (time.time() - self.deltaT)) * (self.left_right_velocity / S)
+            self.y_pos += sin(radians(self.yaw_pos)) * (self.xy_per_second * (time.time() - self.deltaT)) * (self.left_right_velocity / S)
             print("x:{0}  |  y:{1}".format(self.x_pos, self.y_pos))
 
             self.deltaT = time.time()
