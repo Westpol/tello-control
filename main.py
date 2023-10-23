@@ -3,6 +3,7 @@ import cv2
 import pygame
 import numpy as np
 import time
+from math import sin, cos, radians
 
 # Speed of the drone from 0 to 100
 S = 50
@@ -22,7 +23,7 @@ class FrontEnd(object):
             - W and S: Up and down.
     """
 
-    def __init__(self, xy_per_second, yaw_degrees_per_second, height_limit):
+    def __init__(self, xy_per_second, yaw_degrees_per_second, height_limit, xy_boundary):
         # Init pygame
         pygame.init()
 
@@ -55,6 +56,9 @@ class FrontEnd(object):
 
         self.height_limit = height_limit
         self.groundHeight = 0
+        self.xy_boundary = xy_boundary
+
+        self.deltaT = time.time()
 
     def run(self):
 
@@ -155,16 +159,26 @@ class FrontEnd(object):
         if self.send_rc_control:
 
             self.height = self.tello.get_barometer() - self.groundHeight
-            print(self.height)
+
             if self.height > self.height_limit and self.up_down_velocity > 0:
                 self.up_down_velocity = 0
+
+            self.yaw_pos += (self.yaw_per_second * (time.time() - self.deltaT)) * (self.yaw_velocity / S)
+            print(self.yaw_pos)
+            self.x_pos += cos(radians((self.xy_per_second * (time.time() - self.deltaT)) * (self.for_back_velocity / S)))
+            self.x_pos += sin(radians((self.xy_per_second * (time.time() - self.deltaT)) * (self.for_back_velocity / S)))
+            self.y_pos += cos(radians((self.xy_per_second * (time.time() - self.deltaT)) * (self.left_right_velocity / S)))
+            self.y_pos += sin(radians((self.xy_per_second * (time.time() - self.deltaT)) * (self.left_right_velocity / S)))
+            print("x:{0}  |  y:{1}".format(self.x_pos, self.y_pos))
+
+            self.deltaT = time.time()
 
             self.tello.send_rc_control(self.left_right_velocity, self.for_back_velocity,
                                        self.up_down_velocity, self.yaw_velocity)
 
 
 def main():
-    frontend = FrontEnd(S, 34.285714286, 200)
+    frontend = FrontEnd(S, 34.285714286, 200, 500)
 
     # run frontend
 
